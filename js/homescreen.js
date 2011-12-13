@@ -184,7 +184,8 @@ IconGrid.prototype = {
     icon.index = icons.length;
     icons.push(icon);
     // Load the image, sprite will be created when image load is complete
-    var img = new Image();
+    var img = document.createElement('img');
+    img.setAttribute('crossorigin', 'anonymous');
     img.src = src;
     img.label = label;
     img.url = url;
@@ -288,6 +289,13 @@ IconGrid.prototype = {
 function NotificationScreen(touchables) {
   this.touchables = touchables;
   this.attachEvents(this.touchable);
+
+  if (!('mozTelephony' in window.navigator) ||
+      window.navigator.mozTelephony)
+    return;
+
+  var telephony = window.navigator.mozTelephony;
+  telephony.addEventListener('incoming', this);
 }
 
 NotificationScreen.prototype = {
@@ -354,6 +362,9 @@ NotificationScreen.prototype = {
   handleEvent: function(evt) {
     var target = evt.target;
     switch (evt.type) {
+    case 'incoming':
+      Gaia.AppManager.launch('../dialer/dialer.html?choice=incoming');
+      break;
     case 'touchstart':
       if (target != this.touchable)
         return;
@@ -468,28 +479,28 @@ function OnLoad() {
 
   Gaia.AppManager.init();
 
-  var apps = Gaia.AppManager.getInstalledApps();
+  var apps = Gaia.AppManager.getInstalledApps(function(apps) {
+    // XXX this add 5 times the same set of icons
+    var icons = [];
+    for (var i = 0; i < 5; i++)
+      for (var n = 0; n < apps.length; ++n)
+        icons.push(apps[n]);
 
-  var icons = [];
-  // XXX this add 5 times the same set of icons
-  for (var i = 0; i < 5; i++)
-    for (var n = 0; n < apps.length; ++n)
-      icons.push(apps[n]);
+    var screen = document.getElementById('screen');
+    var screenRect = screen.getBoundingClientRect();
+    var screenWidth = screenRect.right - screenRect.left;
+    var screenHeight = screenRect.bottom - screenRect.top;
+    var canvas = document.getElementById('homeCanvas');
+    var width = canvas.width = screenWidth;
+    var height = canvas.height = screenHeight - 24;
 
-  var screen = document.getElementById('screen');
-  var screenRect = screen.getBoundingClientRect();
-  var screenWidth = screenRect.right - screenRect.left;
-  var screenHeight = screenRect.bottom - screenRect.top;
-  var canvas = document.getElementById('homeCanvas');
-  var width = canvas.width = screenWidth;
-  var height = canvas.height = screenHeight - 24;
+    var iconGrid = new IconGrid(canvas, 120, 120, 0.2);
+    for (var n = 0; n < icons.length; ++n) {
+      var icon = icons[n];
 
-  var iconGrid = new IconGrid(canvas, 120, 120, 0.2);
-  for (var n = 0; n < icons.length; ++n) {
-    var icon = icons[n];
-
-    iconGrid.add(icon.icons.size_128, icon.name, icon.url);
-  }
+      iconGrid.add(icon.icon, icon.name, icon.url);
+    }
+  });
 }
 
 // Update the clock and schedule a new update if appropriate
