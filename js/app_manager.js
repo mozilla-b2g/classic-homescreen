@@ -94,6 +94,8 @@ if (!window['Gaia'])
       }
     },
 
+    installedApps: [],
+
     getInstalledApps: function(callback) {
       var homescreenOrigin = document.location.protocol + '//' +
                              document.location.host +
@@ -273,10 +275,6 @@ if (!window['Gaia'])
       }
     }
   };
-
-  window.addEventListener('load', function(evt) {
-    Gaia.AppManager.init();
-  });
 
 })();
 
