@@ -1,7 +1,6 @@
 {
   "homescreen": {
-    "src": ["apps/homescreen/js/**/*.js",
-            "!apps/homescreen/js/migrator.js"],
+    "src": ["apps/homescreen/js/**/*.js"],
     "options": {
       "destination": "docs/homescreen"
     }
