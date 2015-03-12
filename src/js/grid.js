@@ -1093,6 +1093,13 @@ var GridManager = (function() {
     var icons = pageState.icons;
     for (var i = 0; i < icons.length; i++) {
       var descriptor = icons[i];
+
+      // XXX: TODO, throwing an error for some reason.
+      if (!descriptor) {
+        console.log('ERROR: Could not load descriptor.', i, descriptor);
+        continue;
+      }
+
       // navigator.mozApps backed app will objects will be handled
       // asynchronously and therefore at a later time.
       var app = null;
@@ -1536,7 +1543,7 @@ var GridManager = (function() {
 
       // XXX bug 911696 get entrypoints blacklist from settings
       // then doInit
-      if ('mozSettings' in navigator) {
+      if (navigator.mozSettings) {
         var key = 'app.launch_path.blacklist';
         var req = navigator.mozSettings.createLock().get(key);
         req.onsuccess = function onsuccess() {
