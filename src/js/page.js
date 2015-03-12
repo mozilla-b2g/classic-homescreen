@@ -205,6 +205,13 @@ Icon.prototype = {
     // have an empty space
     this.loadCachedIcon();
 
+    if (this.app) {
+      navigator.mozApps.mgmt.getIcon(this.app, MAX_ICON_SIZE * SCALE_RATIO).then(blob => {
+        this.loadImageData(blob);
+      });
+      return;
+    }
+
     IconRetriever.get({
       icon: this,
       success: function(blob) {
