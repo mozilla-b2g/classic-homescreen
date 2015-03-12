@@ -11,7 +11,7 @@
   "permissions": {
     "themeable":{},
     "mobileconnection":{},
-    "webapps-manage":{},
+    "homescreen-webapps-manage":{},
     "systemXHR":{},
     "settings":{ "access": "readwrite" },
     "open-remote-window":{},
